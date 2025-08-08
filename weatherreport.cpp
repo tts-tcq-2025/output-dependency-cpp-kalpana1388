@@ -62,21 +62,26 @@ namespace WeatherSpace
 
     void TestHighPrecipitation()
     {
-        // This instance of stub needs to be different-
-        // to give high precipitation (>60) and low wind-speed (<50)
-        SensorStub sensor(26, 70, 72, 40);
-        //SensorStub sensor;
+void TestHighPrecipitationFails()
+{
+    // Create a sensor stub with high precipitation but low wind speed
+    SensorStub sensor(26, 80, 70, 20); // Precipitation=80, Wind=20 (low)
+    string report = Report(sensor);
+    cout << "TestHighPrecipitationFails Report: " << report << endl;
 
-        // strengthen the assert to expose the bug
-        // (function returns Sunny day, it should predict rain)
-        string report = Report(sensor);
-        assert(report.length() > 0);
+    // We expect rain-related message but if the function is buggy,
+    // it might return "Sunny Day" causing this assert to fail
+    assert(report.find("rain") != string::npos && "Expected rain-related report but got none!");
+}
     }
 }
+
 
 void testWeatherReport() {
     cout << "\nWeather report test\n";
     WeatherSpace::TestRainy();
     WeatherSpace::TestHighPrecipitation();
+    WeatherSpace::TestHighPrecipitationFails();  // New test that may expose an error
     cout << "All is well (maybe)\n";
+}
 }
